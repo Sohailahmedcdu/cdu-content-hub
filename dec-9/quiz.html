@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Export Cars Program Live Class - Quiz</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #333; padding: 20px; }
+        .container { max-width: 700px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 30px; }
+        header { border-bottom: 3px solid #F5C518; padding-bottom: 20px; margin-bottom: 30px; }
+        h1 { font-size: 28px; color: #111; margin-bottom: 5px; }
+        .meta { font-size: 13px; color: #666; }
+        .progress-bar { background: #ddd; height: 6px; border-radius: 3px; margin-bottom: 30px; overflow: hidden; }
+        .progress-fill { background: #F5C518; height: 100%; width: 0%; transition: width 0.3s; }
+        .question { background: #f9f9f9; padding: 20px; border-radius: 6px; margin-bottom: 20px; border-left: 4px solid #F5C518; }
+        .question h3 { font-size: 16px; margin-bottom: 15px; font-weight: 600; }
+        .option { display: flex; align-items: flex-start; padding: 12px; margin: 10px 0; background: white; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
+        .option:hover { background: #f9f9f9; border-color: #F5C518; }
+        .option input[type="radio"] { margin-right: 12px; margin-top: 3px; accent-color: #F5C518; }
+        .option label { flex: 1; cursor: pointer; margin: 0; }
+        button { background: #111; color: white; border: none; padding: 15px 30px; border-radius: 4px; cursor: pointer; font-weight: 600; width: 100%; font-size: 16px; margin-top: 20px; }
+        button:hover { background: #333; }
+        .results { display: none; background: #f0f0f0; padding: 30px; border-radius: 6px; text-align: center; margin-top: 30px; }
+        .results.show { display: block; }
+        .score { font-size: 56px; font-weight: bold; color: #F5C518; margin: 20px 0; }
+        .score-label { font-size: 18px; color: #666; margin-bottom: 20px; }
+        .result-summary { background: white; padding: 20px; border-radius: 6px; margin-top: 20px; text-align: left; }
+        .result-item { padding: 10px 0; border-bottom: 1px solid #ddd; font-size: 14px; }
+        .result-item.correct { color: #2e7d32; }
+        .result-item.incorrect { color: #c62828; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Export Cars Program Live Class - Quiz</h1>
+            <p class="meta">December 9, 2025 | EXPORT PROGRAM</p>
+        </header>
+        
+        <div class="progress-bar"><div class="progress-fill" id="progressBar"></div></div>
+        
+        <form id="quizForm">
+            <div id="questions"></div>
+            <button type="button" onclick="submitQuiz()">Submit & See Results</button>
+        </form>
+        
+        <div class="results" id="results">
+            <h2>Your Results</h2>
+            <div class="score-label">You scored:</div>
+            <div class="score" id="scoreDisplay"></div>
+            <div class="result-summary" id="resultSummary"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { 
+                question: "What is the first step in forming a business for export?", 
+                options: ["a) Incorporate federally or provincially", "b) Open a bank account", "c) Buy a vehicle", "d) Find buyers online"],
+                key: "a",
+                explanation: "Incorporation provides legal structure and liability protection."
+            },
+            { 
+                question: "What is Signal software used for in export?", 
+                options: ["a) Email management", "b) Vehicle appraisal, duty rates, TPMS, break-even", "c) Social media posting", "d) Accounting"],
+                key: "b",
+                explanation: "Signal is the industry-standard tool for vehicle appraisal and export calculations."
+            },
+            { 
+                question: "What HST rate applies in Ontario for vehicle sales?", 
+                options: ["a) 5%", "b) 13%", "c) 15%", "d) No HST on vehicles"],
+                key: "b",
+                explanation: "HST is 13% in Ontario and must be collected and remitted by dealers."
+            },
+            { 
+                question: "Which license do you need to export new vehicles from Ontario?", 
+                options: ["a) Retail only", "b) Wholesale only", "c) Export license", "d) No license needed"],
+                key: "c",
+                explanation: "OMVIC requires an export license to legally export vehicles."
+            },
+            { 
+                question: "Which vehicle is most profitable to export to USA?", 
+                options: ["a) Sedans", "b) F-150 and other pickup trucks", "c) Minivans", "d) Luxury cars"],
+                key: "b",
+                explanation: "American pickup trucks have strong demand in the USA export market."
+            },
+            { 
+                question: "Which vehicle type is most preferred in UAE market?", 
+                options: ["a) 2-5 year old sedans and SUVs", "b) Old economy cars", "c) Sports cars only", "d) Trucks"],
+                key: "a",
+                explanation: "UAE prefers newer, reliable sedans and SUVs with mid-range pricing."
+            },
+            { 
+                question: "What do duty rates represent in export?", 
+                options: ["a) Shipping fees", "b) Taxes charged by importing countries on vehicles", "c) Insurance costs", "d) Dealer markup"],
+                key: "b",
+                explanation: "Duty rates are import taxes that vary by country and affect profitability."
+            },
+            { 
+                question: "What does TPMS stand for?", 
+                options: ["a) Tire and Paint Management System", "b) Tire Pressure Monitoring System", "c) Total Parts Management System", "d) Tracking and Payment Method System"],
+                key: "b",
+                explanation: "TPMS (Tire Pressure Monitoring System) is required by many countries."
+            },
+            { 
+                question: "How should you calculate break-even on an export deal?", 
+                options: ["a) Just the vehicle purchase price", "b) Purchase cost + all expenses + HST + profit margin", "c) Shipping cost only", "d) Random guess"],
+                key: "b",
+                explanation: "Break-even includes all costs: vehicle, inspection, shipping, HST, and desired profit."
+            },
+            { 
+                question: "What should you verify before purchasing a vehicle for export?", 
+                options: ["a) Color matches your preference", "b) It's cheap", "c) Clean title, no liens, no recalls, buyer readiness", "d) The dealer is friendly"],
+                key: "c",
+                explanation: "Verify clean title, buyer legitimacy, and vehicle condition before purchase."
+            }
+        ];
+
+        questions.forEach((q, i) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = 'question';
+            qDiv.innerHTML = `<h3>${i + 1}. ${q.question}</h3>${q.options.map((opt, j) => `<div class="option"><input type="radio" id="q${i}${j}" name="q${i}" value="${String.fromCharCode(97 + j)}"><label for="q${i}${j}">${opt}</label></div>`).join('')}`;
+            document.getElementById('questions').appendChild(qDiv);
+        });
+
+        document.getElementById('quizForm').addEventListener('change', updateProgress);
+
+        function updateProgress() {
+            const answered = document.querySelectorAll('input[type="radio"]:checked').length;
+            const total = questions.length;
+            const percent = (answered / total) * 100;
+            document.getElementById('progressBar').style.width = percent + '%';
+        }
+
+        function submitQuiz() {
+            let score = 0;
+            let details = [];
+            questions.forEach((q, i) => {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                const isCorrect = selected && selected.value === q.key;
+                if (isCorrect) score++;
+                details.push({
+                    question: q.question,
+                    correct: isCorrect,
+                    explanation: q.explanation
+                });
+            });
+            
+            const percent = Math.round((score / 10) * 100);
+            document.getElementById('scoreDisplay').textContent = percent + '%';
+            
+            let summary = `<div style="margin-bottom: 15px; font-size: 16px; font-weight: 600;">You got ${score} out of 10 correct</div>`;
+            details.forEach((d, i) => {
+                const status = d.correct ? '✓ Correct' : '✗ Incorrect';
+                const className = d.correct ? 'result-item correct' : 'result-item incorrect';
+                summary += `<div class="${className}"><strong>${status}:</strong> ${d.question.substring(0, 60)}...</div>`;
+            });
+            
+            document.getElementById('resultSummary').innerHTML = summary;
+            document.getElementById('results').classList.add('show');
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>

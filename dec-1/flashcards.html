@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Export & Digital Dealership - Flashcards</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: linear-gradient(135deg, #111 0%, #1a1a1a 100%); color: #333; padding: 20px; min-height: 100vh; }
+        .container { max-width: 800px; margin: 0 auto; }
+        header { text-align: center; color: white; margin-bottom: 40px; }
+        h1 { font-size: 32px; margin-bottom: 10px; }
+        .meta { font-size: 14px; opacity: 0.8; }
+        .controls { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+        button { background: #F5C518; color: #111; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 14px; }
+        button:hover { background: #fff; }
+        .flashcard { background: white; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); padding: 40px; margin: 20px auto; max-width: 600px; min-height: 300px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; cursor: pointer; transition: transform 0.3s; }
+        .flashcard:hover { transform: translateY(-4px); }
+        .flashcard.back { background: linear-gradient(135deg, #F5C518 0%, #ffed4e 100%); }
+        .card-front, .card-back { width: 100%; }
+        .card-front h3 { font-size: 20px; color: #333; margin-bottom: 15px; }
+        .card-front p { font-size: 16px; color: #666; }
+        .card-back h3 { font-size: 18px; color: #111; margin-bottom: 15px; }
+        .card-back p { font-size: 15px; color: #333; line-height: 1.6; }
+        .card-label { font-size: 12px; color: #999; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .progress { color: white; text-align: center; margin-bottom: 20px; font-size: 14px; }
+        .flip-hint { font-size: 12px; color: #999; margin-top: 20px; opacity: 0.7; }
+        .back .flip-hint { color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Export & Digital Dealership Onboarding</h1>
+            <p class="meta">Flashcards | December 1, 2025</p>
+        </header>
+        <div class="progress" id="progress">Card 1 of 15</div>
+        <div class="controls">
+            <button onclick="previousCard()">← Previous</button>
+            <button onclick="nextCard()">Next →</button>
+            <button onclick="shuffle()">Shuffle</button>
+            <button onclick="reset()">Reset</button>
+        </div>
+        <div class="flashcard" id="flashcard" onclick="flipCard()">
+            <div class="card-front" id="cardContent">
+                <div class="card-label">Term</div>
+                <h3 id="question"></h3>
+                <p id="hint" style="color: #999; font-size: 12px; margin-top: 20px;"></p>
+                <div class="flip-hint">Click to reveal answer</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const flashcards = [
+            { term: "Export", definition: "The sale and shipment of vehicles from Canada to international markets, typically for higher profit margins than domestic retail." },
+            { term: "OMVIC License", definition: "Ontario Motor Vehicle Industry Council license required to legally operate as a wholesale or export dealer in Ontario." },
+            { term: "HST (Harmonized Sales Tax)", definition: "A 13% value-added tax in Ontario collected on vehicle sales and must be remitted by dealers." },
+            { term: "Digital Dealership", definition: "A car dealership that operates primarily through online channels (social media, websites, CRM) with minimal or no physical showroom." },
+            { term: "Signal Software", definition: "Industry tool for vehicle appraisal that provides market pricing, duty calculations, TPMS info, and break-even analysis." },
+            { term: "Break-Even Price", definition: "The minimum selling price needed to cover purchase cost, expenses, and taxes while maintaining profitability." },
+            { term: "Green Light Vehicle", definition: "A vehicle with clean title, no flood damage, no frame damage, and no recalls - ready for export." },
+            { term: "Flood Damage", definition: "Water damage to vehicle interior/mechanical systems; a critical condition that disqualifies vehicles from most export markets." },
+            { term: "Title", definition: "Legal document proving ownership of a vehicle; must be clean and transferred properly for export." },
+            { term: "FOB (Free on Board)", definition: "Shipping term indicating the seller pays for shipping to the port; buyer pays for ocean freight and import costs." },
+            { term: "Transit Time", definition: "The duration for a vehicle to travel from Canada to destination; typically 60-75 days to Middle East by ocean freight." },
+            { term: "Duty Rate", definition: "Tax/tariff charged by importing countries on vehicles; varies by market and must be calculated into profitability." },
+            { term: "Nominee (New Car Export)", definition: "A private buyer used to purchase new vehicles on behalf of an exporter; high-risk strategy with CRA audit exposure." },
+            { term: "Market Demand", definition: "The level of buyer interest and pricing in a specific geography; Middle East, Africa, and US are strong current markets." },
+            { term: "Lead Generation", definition: "Process of acquiring potential buyers through social media, ads, content, and networking to build sales pipeline." }
+        ];
+        let currentCard = 0;
+        let isFlipped = false;
+        function displayCard() {
+            const card = flashcards[currentCard];
+            document.getElementById('question').textContent = card.term;
+            document.getElementById('hint').textContent = card.definition.substring(0, 50) + '...';
+            document.getElementById('progress').textContent = `Card ${currentCard + 1} of ${flashcards.length}`;
+            const cardEl = document.getElementById('flashcard');
+            const contentEl = document.getElementById('cardContent');
+            if (isFlipped) {
+                cardEl.classList.add('back');
+                contentEl.innerHTML = `<div class="card-back"><div class="card-label">Definition</div><h3>${card.term}</h3><p>${card.definition}</p><div class="flip-hint">Click to see next card</div></div>`;
+            } else {
+                cardEl.classList.remove('back');
+                contentEl.innerHTML = `<div class="card-front"><div class="card-label">Term</div><h3>${card.term}</h3><p id="hint" style="color: #999; font-size: 12px; margin-top: 20px;">${card.definition.substring(0, 50)}...</p><div class="flip-hint">Click to reveal answer</div></div>`;
+            }
+        }
+        function flipCard() { isFlipped = !isFlipped; displayCard(); }
+        function nextCard() { currentCard = (currentCard + 1) % flashcards.length; isFlipped = false; displayCard(); }
+        function previousCard() { currentCard = (currentCard - 1 + flashcards.length) % flashcards.length; isFlipped = false; displayCard(); }
+        function shuffle() { for (let i = flashcards.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [flashcards[i], flashcards[j]] = [flashcards[j], flashcards[i]]; } currentCard = 0; isFlipped = false; displayCard(); }
+        function reset() { currentCard = 0; isFlipped = false; displayCard(); }
+        displayCard();
+    </script>
+</body>
+</html>
