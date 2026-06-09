@@ -3,486 +3,335 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CDU Content Hub | Car Dealership University</title>
+    <title>CDU Content Hub | Browse by Topic</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f9f9f9;
-            color: #333;
-            line-height: 1.6;
+            background: #f9f9f9; color: #333; line-height: 1.6;
         }
         header {
             background: linear-gradient(135deg, #111 0%, #1a1a1a 100%);
-            color: white;
-            padding: 50px 20px;
-            text-align: center;
+            color: white; padding: 50px 20px; text-align: center;
             border-bottom: 4px solid #F5C518;
         }
-        header h1 {
-            font-size: 42px;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-        header p {
-            font-size: 18px;
-            opacity: 0.9;
-            margin-bottom: 20px;
-        }
+        header h1 { font-size: 42px; margin-bottom: 10px; font-weight: 700; }
+        header p { font-size: 16px; opacity: 0.9; margin-bottom: 18px; }
+        header a.nav { color: #F5C518; text-decoration: none; font-weight: 600; }
         .cdu-badge {
-            display: inline-block;
-            background: #F5C518;
-            color: #111;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 12px;
+            display: inline-block; background: #F5C518; color: #111;
+            padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 12px;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-        .controls {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .stats { text-align: center; padding: 20px; background: white; border-radius: 8px; margin-bottom: 30px; }
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 20px; }
+        .stat { padding: 15px; }
+        .stat-num { font-size: 32px; font-weight: bold; color: #F5C518; }
+        .stat-label { font-size: 12px; color: #999; margin-top: 5px; }
+        .controls { display: flex; gap: 12px; margin-bottom: 30px; flex-wrap: wrap; align-items: center; }
         .search-box {
-            flex: 1;
-            min-width: 250px;
-            padding: 12px 16px;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
+            flex: 1; min-width: 250px; padding: 12px 16px;
+            border: 2px solid #ddd; border-radius: 6px; font-size: 14px;
         }
         .filter-btn {
-            background: white;
-            border: 2px solid #ddd;
-            padding: 10px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-            font-size: 14px;
+            background: white; border: 2px solid #ddd; padding: 10px 16px;
+            border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s; font-size: 14px;
         }
-        .filter-btn.active {
-            background: #111;
-            color: white;
-            border-color: #111;
-        }
-        .filter-btn:hover {
-            border-color: #F5C518;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
+        .filter-btn.active { background: #111; color: white; border-color: #111; }
+        .filter-btn:hover { border-color: #F5C518; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 25px; margin-bottom: 40px; }
         .card {
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s;
-            display: none;
+            background: white; border-radius: 10px; overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s; display: none; flex-direction: column;
         }
-        .card.show {
-            display: block;
-        }
-        .card:hover {
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-            transform: translateY(-4px);
-        }
+        .card.show { display: flex; }
+        .card:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.15); transform: translateY(-4px); }
         .card-header {
-            background: linear-gradient(135deg, #111 0%, #1a1a1a 100%);
-            color: white;
-            padding: 20px;
-            border-bottom: 3px solid #F5C518;
+            background: linear-gradient(135deg, #111 0%, #1a1a1a 100%); color: white;
+            padding: 20px; border-bottom: 3px solid #F5C518;
         }
-        .card-header h3 {
-            font-size: 18px;
-            margin-bottom: 8px;
+        .card-header .icon { font-size: 26px; }
+        .card-header h3 { font-size: 19px; margin: 6px 0 4px; }
+        .group-tag {
+            display: inline-block; background: #F5C518; color: #111; padding: 3px 10px;
+            border-radius: 12px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
         }
-        .card-meta {
-            font-size: 12px;
-            opacity: 0.85;
+        .card-body { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+        .desc { font-size: 13px; color: #555; margin-bottom: 16px; }
+        .section-label { font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+        .class-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+        .chip {
+            font-size: 11px; padding: 4px 9px; background: #f0f0f0; border-radius: 12px;
+            color: #333; text-decoration: none; border: 1px solid #e3e3e3; transition: all 0.15s;
         }
-        .card-body {
-            padding: 20px;
-        }
-        .asset-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
+        .chip:hover { background: #fffbf0; border-color: #F5C518; }
+        .assets { display: flex; flex-direction: column; gap: 9px; margin-top: auto; }
         .asset {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            background: #f5f5f5;
-            border-radius: 6px;
-            font-size: 13px;
-            text-decoration: none;
-            color: #111;
-            transition: all 0.2s;
-            border-left: 3px solid transparent;
-            cursor: pointer;
+            display: flex; align-items: center; gap: 10px; padding: 11px;
+            border-radius: 6px; font-size: 13px; text-decoration: none; color: #111;
+            background: #f5f5f5; border-left: 3px solid transparent; transition: all 0.2s;
         }
-        .asset:hover {
-            background: #fffbf0;
-            border-left-color: #F5C518;
+        .asset:hover { background: #fffbf0; border-left-color: #F5C518; }
+        .asset .a-icon { font-size: 16px; width: 20px; }
+        .asset.slot {
+            background: #fafafa; border: 1px dashed #ccc; border-left: 3px dashed #ccc;
+            color: #999; cursor: default;
         }
-        .asset.soon {
-            opacity: 0.6;
-            cursor: default;
-        }
-        .asset-icon {
-            font-size: 16px;
-            width: 20px;
-        }
-        .program-badge {
-            display: inline-block;
-            background: #F5C518;
-            color: #111;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        .footer {
-            text-align: center;
-            padding: 30px 20px;
-            border-top: 2px solid #ddd;
-            background: white;
-            color: #666;
-            font-size: 13px;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #999;
-        }
-        .empty-state h3 {
-            font-size: 20px;
-            color: #666;
-            margin-bottom: 10px;
-        }
-        .stats {
-            text-align: center;
-            padding: 20px;
-            background: white;
-            border-radius: 8px;
-            margin-bottom: 30px;
-        }
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-        }
-        .stat {
-            padding: 15px;
-        }
-        .stat-num {
-            font-size: 32px;
-            font-weight: bold;
-            color: #F5C518;
-        }
-        .stat-label {
-            font-size: 12px;
-            color: #999;
-            margin-top: 5px;
-        }
-        .status-badge {
-            display: inline-block;
-            background: #e8f5e9;
-            color: #2e7d32;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-top: 8px;
-        }
+        .asset .tag-soon { font-size: 10px; color: #b58a00; background: #fff6da; padding: 2px 7px; border-radius: 10px; margin-left: auto; font-weight: 600; }
+        .asset .tag-live { font-size: 10px; color: #2e7d32; background: #e8f5e9; padding: 2px 7px; border-radius: 10px; margin-left: auto; font-weight: 600; }
+        .footer { text-align: center; padding: 30px 20px; border-top: 2px solid #ddd; background: white; color: #666; font-size: 13px; }
+        .footer a { color: #111; font-weight: 600; }
+        .empty-state { text-align: center; padding: 60px 20px; color: #999; grid-column: 1 / -1; }
         @media (max-width: 768px) {
             header h1 { font-size: 28px; }
             .grid { grid-template-columns: 1fr; }
             .controls { flex-direction: column; }
-            .search-box { width: 100%; }
-            .filter-btn { width: 100%; }
+            .search-box, .filter-btn { width: 100%; }
         }
     </style>
 </head>
 <body>
     <header>
         <h1>CDU Content Hub</h1>
-        <p>Complete Educational Content Library | All Classes & Programs</p>
+        <p>Browse by Topic &nbsp;·&nbsp; <a class="nav" href="classes.html">▤ Switch to Browse by Class →</a></p>
         <span class="cdu-badge">CAR DEALERSHIP UNIVERSITY</span>
     </header>
 
     <div class="container">
         <div class="stats">
             <div class="stats-row">
-                <div class="stat">
-                    <div class="stat-num" id="total-classes">10</div>
-                    <div class="stat-label">Classes</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-num">5</div>
-                    <div class="stat-label">Live Assets</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-num">20</div>
-                    <div class="stat-label">Quiz Questions</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-num">15</div>
-                    <div class="stat-label">Key Terms</div>
-                </div>
+                <div class="stat"><div class="stat-num" id="topic-count">12</div><div class="stat-label">Topics</div></div>
+                <div class="stat"><div class="stat-num">10</div><div class="stat-label">Source Classes</div></div>
+                <div class="stat"><div class="stat-num">8&times;</div><div class="stat-label">Dubai Market Recurs</div></div>
+                <div class="stat"><div class="stat-num" id="podcast-count">0</div><div class="stat-label">Podcasts Linked</div></div>
             </div>
         </div>
 
         <div class="controls">
-            <input type="text" id="searchInput" class="search-box" placeholder="Search classes (e.g., Dubai, Export, UAE)...">
-            <button class="filter-btn active" onclick="filterProgram('all')">All Programs</button>
-            <button class="filter-btn" onclick="filterProgram('export')">Export</button>
-            <button class="filter-btn" onclick="filterProgram('onboarding')">Onboarding</button>
+            <input type="text" id="searchInput" class="search-box" placeholder="Search topics (e.g., HST, auction, Dubai, salvage)...">
+            <button class="filter-btn active" onclick="filterGroup('all')">All</button>
+            <button class="filter-btn" onclick="filterGroup('setup')">Setup &amp; Compliance</button>
+            <button class="filter-btn" onclick="filterGroup('markets')">Markets</button>
+            <button class="filter-btn" onclick="filterGroup('operations')">Operations</button>
+            <button class="filter-btn" onclick="filterGroup('money')">Money</button>
         </div>
 
         <div class="grid" id="grid"></div>
-
-        <div class="empty-state" id="emptyState" style="display: none;">
-            <h3>No classes found</h3>
-            <p>Try adjusting your search or filters</p>
-        </div>
     </div>
 
     <footer class="footer">
-        <p>CDU Content Hub v2.0 | Updated June 9, 2026</p>
-        <p>5 live study assets | 10 classes tracked | More content rolling out</p>
+        <p>CDU Content Hub &mdash; Topic Library | Built from 10 class recordings, June 9, 2026</p>
+        <p>Topic slots are ready for <strong>NotebookLM</strong> podcasts &amp; study guides &mdash; see <a href="https://github.com/Sohailahmedcdu/cdu-content-hub#adding-content">README</a> to add a link.</p>
     </footer>
 
     <script>
-        const classes = [
+        // Source classes (from Fathom). date -> short label + recording link.
+        const classMeta = {
+            '2025-12-01': { label: 'Dec 1', url: 'https://fathom.video/calls/492626973' },
+            '2025-12-09': { label: 'Dec 9', url: 'https://fathom.video/calls/501847855' },
+            '2025-12-16': { label: 'Dec 16', url: 'https://fathom.video/calls/509566339' },
+            '2025-12-23': { label: 'Dec 23', url: 'https://fathom.video/calls/515768159' },
+            '2026-01-13': { label: 'Jan 13', url: 'https://fathom.video/calls/531668612' },
+            '2026-01-20': { label: 'Jan 20', url: 'https://fathom.video/calls/539294558' },
+            '2026-01-27': { label: 'Jan 27', url: 'https://fathom.video/calls/547263011' },
+            '2026-02-10': { label: 'Feb 10', url: 'https://fathom.video/calls/563543787' },
+            '2026-05-20': { label: 'May 20', url: 'https://fathom.video/calls/681621339' },
+            '2026-06-03': { label: 'Jun 3',  url: 'https://fathom.video/calls/698072254' }
+        };
+
+        // To add a NotebookLM podcast or study guide: replace { status: 'coming' }
+        // with { url: 'https://notebooklm.google.com/...' } (or a local file path) on that asset.
+        const topics = [
             {
-                id: 'dec-1',
-                title: 'Export & Digital Dealership Onboarding',
-                program: 'onboarding',
-                date: 'December 1, 2025',
-                instructor: 'Sohail Ahmed, Vinny & Fonz',
-                description: 'Welcome to CDU - foundational onboarding covering export basics, car business fundamentals, and international markets.',
-                status: '✅ COMPLETE',
+                id: 'setup-licensing', icon: '🏛️', group: 'setup',
+                title: 'Business Setup & Licensing',
+                desc: 'Incorporation (ON/US), HST registration, business bank account & proof-of-funds, OMVIC/DMV dealer licensing, and license-free dealer-rep operation.',
+                classes: ['2025-12-01','2025-12-09','2026-06-03'],
                 assets: [
-                    { name: 'Quiz (10 MCQs)', icon: '📊', url: 'dec-1/quiz.html' },
-                    { name: 'Flashcards (15 terms)', icon: '🃏', url: 'dec-1/flashcards.html' },
-                    { name: 'Infographic', icon: '📋', url: 'dec-1/infographic.html' },
-                    { name: 'Lead Magnet', icon: '💌', url: 'dec-1/lead-magnet.html' }
+                    { name: 'Onboarding Quiz', icon: '📊', url: 'dec-1/quiz.html' },
+                    { name: 'Onboarding Flashcards', icon: '🃏', url: 'dec-1/flashcards.html' },
+                    { name: 'NotebookLM Podcast', icon: '🎧', status: 'coming' },
+                    { name: 'Study Guide', icon: '📄', status: 'coming' }
                 ]
             },
             {
-                id: 'dec-9',
-                title: 'Export Cars Program Live Class',
-                program: 'export',
-                date: 'December 9, 2025',
-                instructor: 'Sohail Ahmed & Chems Benlaifaoui',
-                description: 'Corporation setup, HST, licenses, US export strategy, UAE market fundamentals, Signal appraisal software.',
+                id: 'tax-hst', icon: '🧾', group: 'money',
+                title: 'Tax, HST & Cash Flow',
+                desc: 'HST/GST refunds and ITC paperwork, provincial tax differences (HST/PST/GST), CRA audit risk, and the cash-flow lag between buying and getting paid.',
+                classes: ['2025-12-09','2025-12-23','2026-01-13','2026-01-20','2026-06-03'],
                 assets: [
-                    { name: 'Quiz (10 MCQs)', icon: '📊', url: 'dec-9/quiz.html' },
-                    { name: 'Flashcards', icon: '🃏', status: 'coming' },
-                    { name: 'Infographic', icon: '📋', status: 'coming' },
-                    { name: 'Lead Magnet', icon: '💌', status: 'coming' }
+                    { name: 'NotebookLM Podcast', icon: '🎧', status: 'coming' },
+                    { name: 'Study Guide', icon: '📄', status: 'coming' }
                 ]
             },
             {
-                id: 'dec-16',
-                title: 'Export Cars: US & UAE Strategy',
-                program: 'export',
-                date: 'December 16, 2025',
-                instructor: 'Sohail Ahmed, Ali & Fonz',
-                description: 'License types, appraisal workflow, break-even pricing, Middle East buyer psychology, regional market dynamics.',
+                id: 'uae-market', icon: '🇦🇪', group: 'markets',
+                title: 'The UAE / Dubai Market',
+                desc: 'Why Dubai buys minor-accident full-option cars and salvage, depreciation and market corrections, and buyer psychology. The single most-recurring theme in the program.',
+                classes: ['2025-12-09','2025-12-16','2025-12-23','2026-01-13','2026-01-20','2026-01-27','2026-02-10','2026-05-20'],
                 assets: [
-                    { name: 'Quiz', icon: '📊', status: 'coming' },
-                    { name: 'Flashcards', icon: '🃏', status: 'coming' },
-                    { name: 'Infographic', icon: '📋', status: 'coming' },
-                    { name: 'Lead Magnet', icon: '💌', status: 'coming' }
+                    { name: 'NotebookLM Podcast', icon: '🎧', status: 'coming' },
+                    { name: 'Study Guide', icon: '📄', status: 'coming' }
                 ]
             },
             {
-                id: 'dec-23',
-                title: 'Export Cars: Auction Prep',
-                program: 'export',
-                date: 'December 23, 2025',
-                instructor: 'Sohail Ahmed, Ali, Fonz & Gabriel',
-                description: 'Auction mechanics, car selection, deal review, profit breakdown, Dubai field trip planning.',
+                id: 'dubai-ground', icon: '🗺️', group: 'markets',
+                title: 'Dubai On-the-Ground',
+                desc: 'Districts (Al Quoz, Sharjah, Al Aweer, Al Sajjah), ports (Jabal Ali / M1), the Marhaba & Al Aweer auctions, competitor yards, consignment, Free Zone vs Mainland setup, and travel tips.',
+                classes: ['2025-12-23','2026-05-20'],
                 assets: [
-                    { name: 'Quiz', icon: '📊', status: 'coming' },
-                    { name: 'Flashcards', icon: '🃏', status: 'coming' },
-                    { name: 'Infographic', icon: '📋', status: 'coming' },
-                    { name: 'Lead Magnet', icon: '💌', status: 'coming' }
+                    { name: 'NotebookLM Podcast', icon: '🎧', status: 'coming' },
+                    { name: 'Study Guide', icon: '📄', status: 'coming' }
                 ]
             },
             {
-                id: 'may-20',
-                title: 'Inside the Dubai Car Map',
-                program: 'export',
-                date: 'May 20, 2026',
-                instructor: 'Sohail Ahmed & Chems',
-                description: 'Dubai geography, four districts, key players, auction workflow, trip planning.',
+                id: 'us-lane', icon: '🇺🇸', group: 'markets',
+                title: 'The US Export Lane',
+                desc: 'NAFTA duty-free trucks/SUVs, US compliance (recalls, TPMS, brake lights), clean-title sourcing, FX/currency volatility, the US sourcing ratio, and the L1 visa path.',
+                classes: ['2025-12-09','2025-12-16','2026-01-20','2026-01-27'],
                 assets: [
-                    { name: 'Quiz', icon: '📊', status: 'coming' },
-                    { name: 'Flashcards', icon: '🃏', status: 'coming' },
-                    { name: 'Infographic (with map)', icon: '📋', status: 'coming' },
-                    { name: 'Lead Magnet (guide)', icon: '💌', status: 'coming' }
+                    { name: 'NotebookLM Podcast', icon: '🎧', status: 'coming' },
+                    { name: 'Study Guide', icon: '📄', status: 'coming' }
                 ]
             },
             {
-                id: 'jan-13',
-                title: 'Export Cars Program Live Class',
-                program: 'export',
-                date: 'January 13, 2026',
-                instructor: 'Sohail Ahmed',
-                description: 'Live export training with real deals, market strategy, vehicle sourcing.',
+                id: 'other-markets', icon: '🌍', group: 'markets',
+                title: 'Other Markets: Nigeria, Iran & Beyond',
+                desc: 'The Nigeria lane (theft/payment risk, trusted exporters), UAE re-export hub dynamics, and market-specific rules for Saudi, Iran and Afghanistan.',
+                classes: ['2025-12-09','2025-12-16','2025-12-23','2026-02-10'],
                 assets: [
-                    { name: 'Quiz', icon: '📊', status: 'coming' },
-                    { name: 'Flashcards', icon: '🃏', status: 'coming' },
-                    { name: 'Infographic', icon: '📋', status: 'coming' },
-                    { name: 'Lead Magnet', icon: '💌', status: 'coming' }
+                    { name: 'NotebookLM Podcast', icon: '🎧', status: 'coming' },
+                    { name: 'Study Guide', icon: '📄', status: 'coming' }
                 ]
             },
             {
-                id: 'jan-20',
-                title: 'Export Cars Program (Dubai)',
-                program: 'export',
-                date: 'January 20, 2026',
-                instructor: 'Sohail Ahmed',
-                description: 'Dubai market deep dive, district tours, auction visits, on-ground logistics.',
+                id: 'auctions', icon: '🔨', group: 'operations',
+                title: 'Auctions & Bidding',
+                desc: 'Auction access (Manheim, Adesa, OpenLane), the bidding workflow, max-bid discipline via ME staff, Simulcast vs Active, and niching down on specific models.',
+                classes: ['2025-12-01','2025-12-09','2025-12-23','2026-01-13','2026-01-20','2026-05-20'],
                 assets: [
-                    { name: 'Quiz', icon: '📊', status: 'coming' },
-                    { name: 'Flashcards', icon: '🃏', status: 'coming' },
-                    { name: 'Infographic', icon: '📋', status: 'coming' },
-                    { name: 'Lead Magnet', icon: '💌', status: 'coming' }
+                    { name: 'NotebookLM Podcast', icon: '🎧', status: 'coming' },
+                    { name: 'Study Guide', icon: '📄', status: 'coming' }
                 ]
             },
             {
-                id: 'jan-27',
-                title: 'Car Export: US & Dubai Markets',
-                program: 'export',
-                date: 'January 27, 2026',
-                instructor: 'Sohail Ahmed',
-                description: 'Comparative analysis of US and Dubai export lanes, profitability metrics, market selection.',
+                id: 'appraisal-math', icon: '🧮', group: 'operations',
+                title: 'Appraisal, Pricing & Deal Math',
+                desc: 'Signal appraisal software, the Shems/ME-staff pricing workflow (Dubizzle/Marhaba), break-even pricing, wholesale vs repair-&-retail, and worked deal-math cases (Elantra, Rogue).',
+                classes: ['2025-12-09','2025-12-16','2025-12-23','2026-01-13','2026-01-20'],
                 assets: [
-                    { name: 'Quiz', icon: '📊', status: 'coming' },
-                    { name: 'Flashcards', icon: '🃏', status: 'coming' },
-                    { name: 'Infographic', icon: '📋', status: 'coming' },
-                    { name: 'Lead Magnet', icon: '💌', status: 'coming' }
+                    { name: 'NotebookLM Podcast', icon: '🎧', status: 'coming' },
+                    { name: 'Study Guide', icon: '📄', status: 'coming' }
                 ]
             },
             {
-                id: 'feb-10',
-                title: 'Exporting Cars to Dubai & Nigeria',
-                program: 'export',
-                date: 'February 10, 2026',
-                instructor: 'Sohail Ahmed',
-                description: 'Expansion to West Africa, Nigeria market, dual-lane export strategy.',
+                id: 'vehicle-damage', icon: '🚗', group: 'operations',
+                title: 'Vehicle Selection & Damage Assessment',
+                desc: 'Salvage/damage criteria (frame, flood, roof, airbag rules), rust avoidance, irreparable/junk-title high-margin plays, red flags, and the top export models.',
+                classes: ['2025-12-09','2025-12-16','2026-01-13','2026-02-10','2026-06-03'],
                 assets: [
-                    { name: 'Quiz', icon: '📊', status: 'coming' },
-                    { name: 'Flashcards', icon: '🃏', status: 'coming' },
-                    { name: 'Infographic', icon: '📋', status: 'coming' },
-                    { name: 'Lead Magnet', icon: '💌', status: 'coming' }
+                    { name: 'NotebookLM Podcast', icon: '🎧', status: 'coming' },
+                    { name: 'Study Guide', icon: '📄', status: 'coming' }
                 ]
             },
             {
-                id: 'jun-3',
-                title: 'Nominees & Agents for New Car Export',
-                program: 'export',
-                date: 'June 3, 2026',
-                instructor: 'Sohail Ahmed',
-                description: 'Using agents and nominees for export, compliance, reducing personal liability.',
+                id: 'shipping', icon: '🚢', group: 'operations',
+                title: 'Shipping & Logistics',
+                desc: 'M1 shipping, container vs RoRo, deferred freight, customs/VAT at destination, and reconditioning before resale.',
+                classes: ['2025-12-01','2025-12-23','2026-01-20','2026-05-20'],
                 assets: [
-                    { name: 'Quiz', icon: '📊', status: 'coming' },
-                    { name: 'Flashcards', icon: '🃏', status: 'coming' },
-                    { name: 'Infographic', icon: '📋', status: 'coming' },
-                    { name: 'Lead Magnet', icon: '💌', status: 'coming' }
+                    { name: 'NotebookLM Podcast', icon: '🎧', status: 'coming' },
+                    { name: 'Study Guide', icon: '📄', status: 'coming' }
+                ]
+            },
+            {
+                id: 'financing', icon: '💰', group: 'money',
+                title: 'Financing & Profit Models',
+                desc: 'Financing profit via brokers/DealerTrack, the broker/middleman commission model, and rental/leasing fleet structures.',
+                classes: ['2025-12-23','2026-02-10','2026-06-03'],
+                assets: [
+                    { name: 'NotebookLM Podcast', icon: '🎧', status: 'coming' },
+                    { name: 'Study Guide', icon: '📄', status: 'coming' }
+                ]
+            },
+            {
+                id: 'compliance-advanced', icon: '⚖️', group: 'setup',
+                title: 'Compliance & Advanced Plays',
+                desc: 'Nominees & agents for new-car export, manufacturer export bans, the OMVIC vs grey-market curbsiding case, and other advanced structuring.',
+                classes: ['2026-06-03'],
+                assets: [
+                    { name: 'NotebookLM Podcast', icon: '🎧', status: 'coming' },
+                    { name: 'Study Guide', icon: '📄', status: 'coming' }
                 ]
             }
         ];
 
-        let currentFilter = 'all';
+        let currentGroup = 'all';
         let currentSearch = '';
 
         function renderCards() {
             const grid = document.getElementById('grid');
             grid.innerHTML = '';
-            let visibleCount = 0;
+            let visible = 0;
 
-            classes.forEach(cls => {
-                const programMatch = currentFilter === 'all' || cls.program === currentFilter;
-                const searchMatch = currentSearch === '' || 
-                    cls.title.toLowerCase().includes(currentSearch.toLowerCase()) ||
-                    cls.instructor.toLowerCase().includes(currentSearch.toLowerCase()) ||
-                    cls.description.toLowerCase().includes(currentSearch.toLowerCase());
+            topics.forEach(t => {
+                const groupMatch = currentGroup === 'all' || t.group === currentGroup;
+                const hay = (t.title + ' ' + t.desc).toLowerCase();
+                const searchMatch = currentSearch === '' || hay.includes(currentSearch.toLowerCase());
+                if (!(groupMatch && searchMatch)) return;
+                visible++;
 
-                if (programMatch && searchMatch) {
-                    visibleCount++;
-                    const card = document.createElement('div');
-                    card.className = 'card show';
+                const chips = t.classes.map(d => {
+                    const c = classMeta[d];
+                    return `<a class="chip" href="${c.url}" target="_blank" title="Watch the ${c.label} class on Fathom">${c.label}</a>`;
+                }).join('');
 
-                    let assetsHTML = cls.assets.map(a => {
-                        if (a.status === 'coming') {
-                            return `<div class="asset soon" title="Coming Soon"><span class="asset-icon">${a.icon}</span><span>${a.name}</span> <em style="font-size:11px;color:#999;margin-left:auto;">Soon</em></div>`;
-                        }
-                        return `<a href="${a.url || '#'}" target="_blank" class="asset"><span class="asset-icon">${a.icon}</span><span>${a.name}</span></a>`;
-                    }).join('');
-
-                    let statusBadge = '';
-                    if (cls.status) {
-                        statusBadge = `<span class="status-badge">${cls.status}</span>`;
+                const assets = t.assets.map(a => {
+                    if (a.url) {
+                        return `<a class="asset" href="${a.url}" target="_blank"><span class="a-icon">${a.icon}</span><span>${a.name}</span><span class="tag-live">LIVE</span></a>`;
                     }
+                    return `<div class="asset slot"><span class="a-icon">${a.icon}</span><span>${a.name}</span><span class="tag-soon">ADD LINK</span></div>`;
+                }).join('');
 
-                    card.innerHTML = `
-                        <div class="card-header">
-                            <h3>${cls.title}</h3>
-                            <div class="card-meta">${cls.date} • ${cls.instructor}</div>
-                        </div>
-                        <div class="card-body">
-                            <span class="program-badge">${cls.program.toUpperCase()}</span>
-                            ${statusBadge}
-                            <p style="font-size: 13px; color: #666; margin: 15px 0; margin-top: ${statusBadge ? '8px' : '15px'};">${cls.description}</p>
-                            <div class="asset-list">
-                                ${assetsHTML}
-                            </div>
-                        </div>
-                    `;
-                    grid.appendChild(card);
-                }
+                const card = document.createElement('div');
+                card.className = 'card show';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <span class="icon">${t.icon}</span>
+                        <h3>${t.title}</h3>
+                        <span class="group-tag">${t.group}</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="desc">${t.desc}</p>
+                        <div class="section-label">Covered in ${t.classes.length} class${t.classes.length > 1 ? 'es' : ''}</div>
+                        <div class="class-chips">${chips}</div>
+                        <div class="section-label">Content</div>
+                        <div class="assets">${assets}</div>
+                    </div>`;
+                grid.appendChild(card);
             });
 
-            document.getElementById('emptyState').style.display = visibleCount === 0 ? 'block' : 'none';
+            if (visible === 0) {
+                grid.innerHTML = '<div class="empty-state"><h3>No topics found</h3><p>Try a different search or filter.</p></div>';
+            }
 
             document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if ((btn.textContent === 'All Programs' && currentFilter === 'all') ||
-                    (btn.textContent === 'Export' && currentFilter === 'export') ||
-                    (btn.textContent === 'Onboarding' && currentFilter === 'onboarding')) {
-                    btn.classList.add('active');
-                }
+                btn.classList.toggle('active',
+                    (btn.textContent.trim() === 'All' && currentGroup === 'all') ||
+                    btn.textContent.toLowerCase().includes(currentGroup) && currentGroup !== 'all');
             });
         }
 
-        function filterProgram(program) {
-            currentFilter = program;
-            renderCards();
-        }
+        function filterGroup(g) { currentGroup = g; renderCards(); }
 
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            currentSearch = e.target.value;
-            renderCards();
+        document.getElementById('searchInput').addEventListener('input', e => {
+            currentSearch = e.target.value; renderCards();
         });
+
+        // live podcast counter
+        document.getElementById('podcast-count').textContent =
+            topics.reduce((n, t) => n + t.assets.filter(a => a.url && a.name.includes('Podcast')).length, 0);
+        document.getElementById('topic-count').textContent = topics.length;
 
         renderCards();
     </script>
